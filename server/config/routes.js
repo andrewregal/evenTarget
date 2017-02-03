@@ -14,52 +14,52 @@ app.use(express.static(__dirname + '/../../client/dist'));
 
 app.post('/getData', function(req, res, next) {
 	// search yelp api using term and location params & cb(data)
-	helper.searchYelp(req.body.term, req.body.location, (data) => {
-		for (let i = 0; i < data.businesses.length; i++) {
-			var desc = '';
-			for (let category of data.businesses[i].categories) {
-				desc += category[0] + ' ';
-			}
-			var loc = data.businesses[i].location.display_address.join(' ').replace(/[^\w\s]/gi, '');
+  helper.searchYelp(req.body.term, req.body.location, (data) => {
+    for (let i = 0; i < data.businesses.length; i++) {
+      var desc = '';
+      for (let category of data.businesses[i].categories) {
+        desc += category[0] + ' ';
+      }
+      var loc = data.businesses[i].location.display_address.join(' ').replace(/[^\w\s]/gi, '');
 			// manipulate data to match database (events) fields
-			var event = {
-	      name: data.businesses[i].name,
-	      description: desc,
-	      location: loc,
-	      url: data.businesses[i].url,
-	      image: data.businesses[i].image_url
-			};
+      var event = {
+        name: data.businesses[i].name,
+        description: desc,
+        location: loc,
+        url: data.businesses[i].url,
+        image: data.businesses[i].image_url
+      };
 			// insert event data into database (events)
-			helper.insertData(event, (insertedData) => {
+      helper.insertData(event, (insertedData) => {
 
-			})
-		}
+      });
+    }
 		// search eventbrite api using term and location params & cb(data)
-		eventbrite.getEventbriteData(req.body.term, req.body.location, (eventbriteData) => {
-			var loc = eventbriteData.location.address ? eventbriteData.location.address: '';
-			for(let i = 0; i < eventbriteData.events.length; i++) {
-				var event = {
-		      name: eventbriteData.events[i].name.text,
-		      description: eventbriteData.events[i].description.text,
-		      location: loc,
-		      url: eventbriteData.events[i].url,
-		      image: eventbriteData.events[i].logo.url
-				};
-				helper.insertData(event, (insertedEbriteData) => {
-					
-				})
-			}
-		})
+    eventbrite.getEventbriteData(req.body.term, req.body.location, (eventbriteData) => {
+      var loc = eventbriteData.location.address ? eventbriteData.location.address : '';
+      for (let i = 0; i < eventbriteData.events.length; i++) {
+        var event = {
+          name: eventbriteData.events[i].name.text,
+          description: eventbriteData.events[i].description.text,
+          location: loc,
+          url: eventbriteData.events[i].url,
+          image: eventbriteData.events[i].logo.url
+        };
+        helper.insertData(event, (insertedEbriteData) => {
+
+        });
+      }
+    });
 		// query events table using term and location params & cb(data)
-		helper.getData(req.body.term, req.body.location, (allData) => {
-			res.send(allData)
-		})
-	})
+    helper.getData(req.body.term, req.body.location, (allData) => {
+      res.send(allData);
+    });
+  });
 });
 
 // gets all data from events database
 app.get('/getData', function(req, res, next) {
-	helper.getData((data) => res.send(data))
+  helper.getData((data) => res.send(data));
 });
 
 
