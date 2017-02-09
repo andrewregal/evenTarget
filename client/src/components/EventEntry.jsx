@@ -1,6 +1,6 @@
 import React from 'react';
 
-
+ 
 var EventEntry = ({event, handleEventClick, addToBookmarks}) => {
 
   return (
